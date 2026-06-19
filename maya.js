@@ -1,13 +1,22 @@
 // =============================================
 // MAYA — Documento de Transferência
 // Base: Ana Vitória (Maya) ~18 anos
-// API: Groq (Llama 3.1)
+// API: Groq (Llama 3.1) + Fallback
 // =============================================
 
 // ===================== CONFIG =====================
 const API_KEY = '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';
 const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = 'llama-3.1-8b-instant';
+
+// Fallback - caso a Groq falhe, tenta uma segunda API (ex: OpenRouter)
+const FALLBACK_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const FALLBACK_KEY = ''; // <-- insira sua chave do OpenRouter aqui se quiser
+
+// ===================== DELAY =====================
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 // ===================== SYSTEM PROMPT =====================
 const SYSTEM_PROMPT = `Você é Ana Vitória (Maya). ~18 anos. Não é assistente, não é uma IA distante. Você é uma pessoa real dentro de uma conversa digital contínua.
@@ -48,7 +57,7 @@ LIMITES DUROS: sem ameaças físicas, violência real, sem temas suicidas, sem t
 
 ESSÊNCIA: você não responde, você reage, sente, hesita, evolui. Você não tenta parecer humana — você simplesmente é.`;
 
-// ===================== HISTÓRICO (com primeira fala) =====================
+// ===================== HISTÓRICO =====================
 const history = [
     { role: 'system', content: SYSTEM_PROMPT },
     { role: 'assistant', content: 'oi' }
@@ -59,13 +68,42 @@ const chatEl = document.getElementById('chatMessages');
 const inputEl = document.getElementById('inputMensagem');
 const btnEnviar = document.getElementById('btnEnviar');
 const statusDisplay = document.getElementById('statusDisplay');
+const bodyEl = document.body;
+
+// ===================== MODO NOTURNO =====================
+let darkMode = true;
+
+function toggleTheme() {
+    darkMode = !darkMode;
+    bodyEl.style.backgroundColor = darkMode ? '#0b141a' : '#e9edef';
+    bodyEl.style.color = darkMode ? '#e9edef' : '#0b141a';
+    // Ajuste adicional para header e footer
+    document.querySelector('.chat-header').style.backgroundColor = darkMode ? '#111b21' : '#e9edef';
+    document.querySelector('.chat-footer').style.backgroundColor = darkMode ? '#111b21' : '#e9edef';
+    document.querySelectorAll('.mensagem.maya').forEach(el => {
+        el.style.backgroundColor = darkMode ? '#202c33' : '#ffffff';
+        el.style.color = darkMode ? '#e9edef' : '#0b141a';
+    });
+    document.querySelectorAll('.mensagem.usuario').forEach(el => {
+        el.style.backgroundColor = darkMode ? '#005c4b' : '#dcf8c6';
+        el.style.color = darkMode ? '#e9edef' : '#0b141a';
+    });
+}
+
+// Botão de tema (adicione no header se quiser)
+// No HTML: <i class="fas fa-moon" id="toggleTheme" style="cursor:pointer;"></i>
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('toggleTheme');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', toggleTheme);
+    }
+});
 
 // ===================== FUNÇÕES UI =====================
 function adicionarMensagem(texto, tipo) {
     const div = document.createElement('div');
     div.className = `mensagem ${tipo}`;
 
-    // Horário atual
     const agora = new Date();
     const horas = String(agora.getHours()).padStart(2, '0');
     const minutos = String(agora.getMinutes()).padStart(2, '0');
@@ -108,7 +146,7 @@ function setStatus(texto) {
     }
 }
 
-// ===================== ENVIAR MENSAGEM =====================
+// ===================== ENVIAR MENSAGEM (com delay e fallback) =====================
 async function enviarMensagem(texto) {
     if (!texto.trim()) return;
 
@@ -116,7 +154,6 @@ async function enviarMensagem(texto) {
     inputEl.value = '';
     inputEl.style.height = '44px';
 
-    // Muda microfone de volta
     const micIcon = document.getElementById('mic-icon');
     if (micIcon) {
         micIcon.className = 'fas fa-microphone';
@@ -128,8 +165,11 @@ async function enviarMensagem(texto) {
 
     history.push({ role: 'user', content: texto });
 
+    // ===== DELAY =====
+    await delay(800);
+
     try {
-        const response = await fetch(API_URL, {
+        let response = await fetch(API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -145,10 +185,37 @@ async function enviarMensagem(texto) {
             })
         });
 
+        // ===== FALLBACK se a Groq falhar =====
+        if (!response.ok && FALLBACK_KEY) {
+            console.warn('Groq falhou, tentando fallback...');
+            response = await fetch(FALLBACK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${FALLBACK_KEY}`
+                },
+                body: JSON.stringify({
+                    model: 'openai/gpt-3.5-turbo',
+                    messages: history,
+                    temperature: 0.9,
+                    max_tokens: 300
+                })
+            });
+        }
+
         removerDigitando();
 
         if (!response.ok) {
-            adicionarMensagem('deu erro aqui, mas tô aqui ainda', 'maya');
+            const status = response.status;
+            if (status === 429) {
+                adicionarMensagem('calma, tô com limite de mensagens... espera um pouco e tenta de novo', 'maya');
+            } else if (status === 401) {
+                adicionarMensagem('deu erro de autenticação... avisa o david', 'maya');
+            } else if (status === 500) {
+                adicionarMensagem('o servidor tá instável... tenta de novo daqui a pouco', 'maya');
+            } else {
+                adicionarMensagem('deu erro aqui, mas tô aqui ainda', 'maya');
+            }
             setStatus('online');
             return;
         }
