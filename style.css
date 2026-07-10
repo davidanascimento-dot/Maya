@@ -1,0 +1,569 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: #080b11;
+  background: radial-gradient(circle at center, #0f1c30 0%, #080b11 75%);
+  color: #e8edf0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* ===== TOP BAR ===== */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  z-index: 10;
+  transition: all 0.6s ease;
+}
+
+/* ===== HEADER EM MODO ESTUDO ===== */
+.top-bar.estudo-ativo {
+  border-bottom: 2px solid #00b894;
+  box-shadow: 0 4px 40px rgba(0, 184, 148, 0.12);
+  transition: all 0.6s ease;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #9bb7c4;
+}
+
+.brand span {
+  color: #00b894;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pomodoro-container {
+  background: rgba(31, 52, 62, 0.4);
+  border: 1px solid rgba(47, 68, 80, 0.5);
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.pomodoro-btn {
+  background: none;
+  border: none;
+  color: #00b894;
+  cursor: pointer;
+}
+
+.top-bar button.utility-btn {
+  background: none;
+  border: none;
+  color: #9bb7c4;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.top-bar button.utility-btn:hover {
+  color: #fff;
+}
+
+/* ===== BADGE DE MODO ESTUDO ===== */
+.status-badge {
+  display: inline-block;
+  background: rgba(0, 184, 148, 0.12);
+  border: 1px solid #00b894;
+  color: #00b894;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 14px;
+  border-radius: 12px;
+  letter-spacing: 0.4px;
+  margin-top: 3px;
+  animation: pulseGlow 1.8s infinite ease-in-out;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 20px rgba(0, 184, 148, 0.08);
+  transition: all 0.4s ease;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(0, 184, 148, 0.1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+    box-shadow: 0 0 30px rgba(0, 184, 148, 0.3);
+  }
+}
+
+/* ===== AVATAR COM AURA PULSANTE ===== */
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.pulse-ring {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 184, 148, 0.3);
+  animation: ringPulse 2s infinite ease-out;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.pulse-ring.ativo {
+  opacity: 1;
+}
+
+@keyframes ringPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* ===== MAIN CENTER AREA ===== */
+.dashboard-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  transition: justify-content 0.5s ease;
+}
+
+.dashboard-container.active-chat {
+  justify-content: flex-start;
+}
+
+/* WELCOME SCREEN */
+.welcome-screen {
+  text-align: center;
+  margin-bottom: 32px;
+  transition: all 0.5s ease;
+}
+
+.welcome-screen h1 {
+  font-size: 40px;
+  font-weight: 400;
+  color: #e8edf0;
+  letter-spacing: -0.5px;
+}
+
+/* ===== CHAT HISTORY LOG ===== */
+.chat-history {
+  width: 100%;
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-bottom: 24px;
+  max-height: 55vh;
+  transition: background 0.8s ease;
+}
+
+/* ===== FUNDO DO CHAT EM MODO ESTUDO ===== */
+.chat-history.modo-estudo {
+  background: rgba(0, 184, 148, 0.02);
+}
+
+.chat-history::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-history::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+.msg-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.msg-row.user-row { align-items: flex-end; }
+.msg-row.maya-row { align-items: flex-start; }
+
+.bubble {
+  max-width: 85%;
+  padding: 14px 20px;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+.user-row .bubble {
+  background: #1f343e;
+  color: #e8edf0;
+}
+
+.maya-row .bubble {
+  background: transparent;
+  color: #e8edf0;
+  padding-left: 0;
+}
+
+/* ===== BOLHAS DA MAYA EM MODO ESTUDO ===== */
+.chat-history.modo-estudo .maya-row .bubble {
+  border-left: 2px solid #00b894;
+  padding-left: 16px;
+}
+
+.bubble-meta {
+  font-size: 11px;
+  color: #7f9ba8;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.maya-row .bubble-meta { 
+  color: #00b894; 
+  font-weight: bold; 
+  transition: all 0.3s ease;
+}
+
+.thinking-box {
+  background: rgba(0, 184, 148, 0.05);
+  border-left: 2px solid #00b894;
+  padding: 10px 15px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #9bb7c4;
+}
+
+/* ===== CENTRAL PILL INPUT ===== */
+.search-pill-container {
+  width: 100%;
+  background: #1e1f20;
+  border-radius: 32px;
+  padding: 8px 16px 8px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.search-pill-container:focus-within {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 40px rgba(0,0,0,0.5);
+}
+
+.pill-btn {
+  background: none;
+  border: none;
+  color: #e8edf0;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.pill-btn:hover { color: #00b894; }
+
+#inputMensagem {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e8edf0;
+  font-size: 16px;
+  resize: none;
+  max-height: 120px;
+  font-family: inherit;
+  line-height: 1.5;
+  padding: 6px 0;
+}
+
+#inputMensagem::placeholder {
+  color: #80868b;
+}
+
+.pill-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Dropdown Raciocínio */
+.dropdown-raciocinio {
+  background: transparent;
+  border: none;
+  color: #c4c7c5;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 16px;
+  outline: none;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.dropdown-raciocinio:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.dropdown-raciocinio option {
+  background: #1e1f20;
+  color: #e8edf0;
+}
+
+/* ===== QUICK ACCELERATORS ===== */
+.quick-tags {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.tag-btn {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #c4c7c5;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tag-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* ===== FOOTER ===== */
+.footer-info {
+  text-align: center;
+  font-size: 12px;
+  color: #4f5b66;
+  padding: 24px;
+}
+
+/* Hidden file element */
+#fileAttachment { display: none; }
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 600px) {
+  .top-bar {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .brand {
+    font-size: 14px;
+  }
+
+  .top-actions {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .pomodoro-container {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .welcome-screen h1 {
+    font-size: 24px;
+  }
+
+  .search-pill-container {
+    border-radius: 20px;
+    padding: 6px 12px;
+    gap: 10px;
+  }
+
+  #inputMensagem {
+    font-size: 14px;
+  }
+
+  .pill-right-actions {
+    gap: 6px;
+  }
+
+  .dropdown-raciocinio {
+    font-size: 11px;
+    padding: 4px 6px;
+  }
+
+  .quick-tags {
+    gap: 6px;
+  }
+
+  .tag-btn {
+    font-size: 11px;
+    padding: 5px 12px;
+  }
+
+  .chat-history {
+    max-height: 45vh;
+    padding-right: 4px;
+  }
+
+  .bubble {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .footer-info {
+    font-size: 10px;
+    padding: 12px;
+  }
+
+  .status-badge {
+    font-size: 9px;
+    padding: 1px 10px;
+  }
+
+  .pulse-ring {
+    width: 44px;
+    height: 44px;
+    top: -2px;
+    left: -2px;
+  }
+
+  .avatar-wrapper .avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .top-bar {
+    padding: 8px 12px;
+  }
+
+  .brand {
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .top-actions {
+    gap: 8px;
+  }
+
+  .pomodoro-container {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+
+  .top-bar button.utility-btn {
+    font-size: 14px;
+  }
+
+  .welcome-screen h1 {
+    font-size: 18px;
+  }
+
+  .search-pill-container {
+    padding: 4px 8px;
+    border-radius: 16px;
+    gap: 6px;
+  }
+
+  #inputMensagem {
+    font-size: 12px;
+  }
+
+  .pill-btn {
+    font-size: 14px;
+  }
+
+  .dropdown-raciocinio {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+
+  .tag-btn {
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+
+  .bubble {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .bubble-meta {
+    font-size: 9px;
+  }
+
+  .thinking-box {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .chat-history {
+    max-height: 40vh;
+    gap: 12px;
+  }
+
+  .footer-info {
+    font-size: 9px;
+    padding: 8px;
+  }
+
+  .status-badge {
+    font-size: 8px;
+    padding: 1px 8px;
+  }
+
+  .pulse-ring {
+    width: 38px;
+    height: 38px;
+    top: -1px;
+    left: -1px;
+  }
+
+  .avatar-wrapper .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+}

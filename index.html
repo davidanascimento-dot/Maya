@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maya · ENEM Advanced Intelligence</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="brand">✦ Maya <span>· ENEM Premium</span></div>
+    <div class="top-actions">
+      <!-- Cronômetro Avançado de Estudos -->
+      <div class="pomodoro-container">
+        <i class="fa-regular fa-clock"></i>
+        <span id="timerDisplay">25:00</span>
+        <button class="pomodoro-btn" id="btnPomodoro" title="Iniciar Bloco de Foco"><i class="fas fa-play"></i></button>
+      </div>
+      <button class="utility-btn" id="resetChat" title="Limpar Painel"><i class="fas fa-eraser"></i></button>
+      <button class="utility-btn" title="Configurações Avançadas"><i class="fas fa-sliders"></i></button>
+    </div>
+  </header>
+
+  <!-- DASHBOARD CENTRAL -->
+  <main class="dashboard-container" id="dashboard">
+    
+    <!-- Tela de Boas-Vindas Estilo Gemini (image_fd077c.png) -->
+    <div class="welcome-screen" id="welcomeScreen">
+      <h1 id="greetingText">E aí, David, qual o plano de estudo hoje?</h1>
+    </div>
+
+    <!-- Histórico de Conversa Oculto Inicialmente -->
+    <div class="chat-history" id="chatHistory"></div>
+
+    <!-- Barra Estilo Pílula Centralizada -->
+    <div class="search-pill-container">
+      <!-- Botão Adicionar (+) para Redações/Questões -->
+      <button class="pill-btn" onclick="document.getElementById('fileAttachment').click()" title="Anexar redação ou imagem da questão">
+        <i class="fas fa-plus"></i>
+      </button>
+      <input type="file" id="fileAttachment" accept="image/*,text/plain,.pdf" />
+
+      <textarea id="inputMensagem" placeholder="Peça ajuda com teorias, resoluções ou envie sua redação..." rows="1"></textarea>
+
+      <!-- Ações Direitas (Seletor Inteligente + Microfone + Enviar) -->
+      <div class="pill-right-actions">
+        <select class="dropdown-raciocinio" id="modoEstudo" title="Mudar Modo de Raciocínio">
+          <option value="raciocinio">Raciocínio Avançado</option>
+          <option value="redacao">Corretor Redação Nota 1000</option>
+          <option value="simulado">Simulado Flash</option>
+          <option value="revisao">Resumos Ativos</option>
+        </select>
+        
+        <button class="pill-btn" id="btnVoice" title="Digitar por voz"><i class="fas fa-microphone"></i></button>
+        <button class="pill-btn" id="btnEnviar" style="color: #00b894;" title="Enviar comando"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <!-- Tags de Atalho Rápidas -->
+    <div class="quick-tags" id="quickTags">
+      <button class="tag-btn" data-text="Analise meu cronograma de reta final para o ENEM">📅 Cronograma Reta Final</button>
+      <button class="tag-btn" data-text="Me mande uma questão inédita de Matemática e Natureza nível difícil">📐 Questão Natureza/Mat</button>
+      <button class="tag-btn" data-text="Quais os repertórios coringas mais eficientes para eixos sociais na redação?">📝 Repertórios Coringa</button>
+    </div>
+
+  </main>
+
+  <!-- FOOTER CONTADOR -->
+  <footer class="footer-info">
+    Maya Inteligência Cognitiva · Faltam menos de 120 dias para o ENEM · Foco Máximo Ativado
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
